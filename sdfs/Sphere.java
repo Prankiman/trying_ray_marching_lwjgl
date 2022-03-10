@@ -1,5 +1,6 @@
 package sdfs;
 
+import main.HelloWorld;
 import main.Vect;
 
 
@@ -13,8 +14,8 @@ public class Sphere {
     }
 
     public double distToPoint(Vect p){
-       displacement = Math.sin(5* p.x) * Math.sin(5.0 * p.y) * Math.sin(5 * p.z) * 0.25;
-        return Vect.Vector_Length(Vect.subV(pos, p))-radius+displacement;
+       displacement = Math.sin(3* (HelloWorld.xx+p.x)) * Math.sin(3 * p.y) * Math.sin(3 * p.z) * 0.3;
+       return Vect.Vector_Length(Vect.subV(pos, p))-radius+displacement;
     }
     public Vect calculate_normal(Vect p)
     {

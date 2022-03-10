@@ -19,6 +19,8 @@ public class HelloWorld {
 	// The window handle
 	private long window;
 
+	public static float xx;
+
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
@@ -49,7 +51,7 @@ public class HelloWorld {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(1000, 1000, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(500, 500, "Hello World!", NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -100,19 +102,17 @@ public class HelloWorld {
 	
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
-
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
+			xx += 0.1f;
 			// Draw quads
-			float xu, yu, xu2, yu2;
+			float xu, yu;
 			for (float y = 0; y < Height; y++){
 				for (float x = 0; x < Width ; x++){
 					//normalizing pixel coordinates to be between -1 and 1 			http://mvps.org/DirectX/articles/rayproj.htm
 					xu=(x/WidthDiv2-1.0f)/aspect;
 					yu=1.0f-y/HeightDiv2;
-					xu2=((x+1)/WidthDiv2-1.0f)/aspect;
-					yu2=1.0f-(y+1)/HeightDiv2;
 					 // Find where this pixel sample hits in the scene
 					Ray ray = new Ray();
 					Camera cam = new Camera();
@@ -123,13 +123,10 @@ public class HelloWorld {
 						 yu);
 				
 					double color = ray_march(ray);
-					
-					glBegin(GL_QUADS);
+					glPointSize(0);
+					glBegin(GL_POINTS);
 						glColor3f((float)color, (float)color, 0);
-						glVertex2d(xu, yu);
-						glVertex2d(xu2, yu);
-						glVertex2d(xu2, yu2);
-						glVertex2d(xu, yu2);
+						glVertex2f(xu, yu);
 					glEnd();
 				}
 			}
@@ -144,8 +141,8 @@ public class HelloWorld {
 		
 	}
 	Vect orig = new Vect(0, 0, -1);
-	Sphere s = new Sphere(new Vect(0, 0, 4), 4f);
-	float Width = 1000, Height = 1000;
+	Sphere s = new Sphere(new Vect(0, 0, 2), 2f);
+	float Width = 500, Height = 500;
 	float aspect = Width/Height;
 	float WidthDiv2 = Width*0.5f;
 	float HeightDiv2 = Height*0.5f;
@@ -156,8 +153,8 @@ public class HelloWorld {
 	public double ray_march(Ray r)
 	{
 		float total_distance_traveled = 0.0f;
-		float MINIMUM_HIT_DISTANCE = 0.0001f;
-		float MAXIMUM_TRACE_DISTANCE = 40;
+		float MINIMUM_HIT_DISTANCE = 0.01f;
+		float MAXIMUM_TRACE_DISTANCE = 30;
 
 		while(true)
 		{
