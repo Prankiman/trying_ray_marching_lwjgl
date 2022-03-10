@@ -49,7 +49,7 @@ public class HelloWorld {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(Width, Height, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(1000, 1000, "Hello World!", NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -69,7 +69,6 @@ public class HelloWorld {
 
 			// Get the resolution of the primary monitor
 			GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
 			// Center the window
 			glfwSetWindowPos(
 				window,
@@ -106,21 +105,21 @@ public class HelloWorld {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
 			// Draw quads
-			double xu, yu, xu2, yu2;
-			for (int y = 0; y < Height; y++){
-				for (int x = 0; x < Width ; x++){
+			float xu, yu, xu2, yu2;
+			for (float y = 0; y < Height; y++){
+				for (float x = 0; x < Width ; x++){
 					//normalizing pixel coordinates to be between -1 and 1 			http://mvps.org/DirectX/articles/rayproj.htm
-					xu=(x/(Width*0.5)-1.0f)/(Width/Height);
-					yu=1.0f-y/(Height*0.5);
-					xu2=((x+1)/(Width*0.5)-1.0f)/(Width/Height);
-					yu2=1.0f-(y+1)/(Height*0.5);
+					xu=(x/WidthDiv2-1.0f)/aspect;
+					yu=1.0f-y/HeightDiv2;
+					xu2=((x+1)/WidthDiv2-1.0f)/aspect;
+					yu2=1.0f-(y+1)/HeightDiv2;
 					 // Find where this pixel sample hits in the scene
 					Ray ray = new Ray();
 					Camera cam = new Camera();
 					
 					 ray = cam.makeCameraRay(
 						 orig,
-						 xu*Width/Height,
+						 xu,
 						 yu);
 				
 					double color = ray_march(ray);
@@ -144,21 +143,23 @@ public class HelloWorld {
 		}
 		
 	}
-	Vect orig = new Vect(0, 0, 0);
-	Sphere s = new Sphere(new Vect(0, 0, 3), 2f);
-	int Width = 1920, Height = 1080;
+	Vect orig = new Vect(0, 0, -1);
+	Sphere s = new Sphere(new Vect(0, 0, 4), 4f);
+	float Width = 1000, Height = 1000;
+	float aspect = Width/Height;
+	float WidthDiv2 = Width*0.5f;
+	float HeightDiv2 = Height*0.5f;
 	public static void main(String[] args) {
 		new HelloWorld().run();
 	}
 
 	public double ray_march(Ray r)
 	{
-		float total_distance_traveled = 0.1f;
-		int NUMBER_OF_STEPS = 32;
-		float MINIMUM_HIT_DISTANCE = 0.001f;
+		float total_distance_traveled = 0.0f;
+		float MINIMUM_HIT_DISTANCE = 0.0001f;
 		float MAXIMUM_TRACE_DISTANCE = 40;
 
-		for (int i = 0; i < NUMBER_OF_STEPS; ++i)
+		while(true)
 		{
 			Vect current_position =  Vect.addV(r.origin, Vect.Vector_Mul(r.direction, total_distance_traveled));
 
@@ -174,6 +175,7 @@ public class HelloWorld {
 
 				return 0.8*diffuse_intensity;
 			}
+		
 
 			if (total_distance_traveled > MAXIMUM_TRACE_DISTANCE)
 			{
