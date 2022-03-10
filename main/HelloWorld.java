@@ -51,7 +51,8 @@ public class HelloWorld {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(500, 500, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(1920, 1080, "Hello World!", NULL, NULL);
+
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -77,8 +78,8 @@ public class HelloWorld {
 				(vidmode.width() - pWidth.get(0)) / 2,
 				(vidmode.height() - pHeight.get(0)) / 2
 			);
-		} // the stack frame is popped automatically
 
+		} // the stack frame is popped automatically
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(window);
 		// Enable v-sync
@@ -111,7 +112,7 @@ public class HelloWorld {
 			for (float y = 0; y < Height; y++){
 				for (float x = 0; x < Width ; x++){
 					//normalizing pixel coordinates to be between -1 and 1 			http://mvps.org/DirectX/articles/rayproj.htm
-					xu=(x/WidthDiv2-1.0f)/aspect;
+					xu=(x/WidthDiv2-1.0f);//won't divide by aspect ratio here since screen is already normalized
 					yu=1.0f-y/HeightDiv2;
 					 // Find where this pixel sample hits in the scene
 					Ray ray = new Ray();
@@ -119,7 +120,7 @@ public class HelloWorld {
 					
 					 ray = cam.makeCameraRay(
 						 orig,
-						 xu,
+						 xu*aspect,//multiplication by aspect here instead
 						 yu);
 				
 					double color = ray_march(ray);
@@ -142,7 +143,7 @@ public class HelloWorld {
 	}
 	Vect orig = new Vect(0, 0, -1);
 	Sphere s = new Sphere(new Vect(0, 0, 2), 2f);
-	float Width = 500, Height = 500;
+	float Width = 1920, Height = 1080;
 	float aspect = Width/Height;
 	float WidthDiv2 = Width*0.5f;
 	float HeightDiv2 = Height*0.5f;
